@@ -1,13 +1,9 @@
 
 
 <template>
-<h2>test {{ canLogin }}</h2>
-<nav-bar-top>
-
-</nav-bar-top>
+<nav-bar-top></nav-bar-top>
 <nav-bar-top-sub ></nav-bar-top-sub>
 </template>
-
 
 
 <script setup>

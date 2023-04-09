@@ -2,7 +2,7 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import { Head } from '@inertiajs/vue3';
 import actionTable from '@/Components/sb_dashboard_tables/table.vue'
-import card from '@/Components/sb_softwares/Card.vue'
+import card from '@/Components/sb_softwares/SoftwareCard.vue'
 
 </script>
 
@@ -17,9 +17,10 @@ import card from '@/Components/sb_softwares/Card.vue'
             <editButton/>
             <favoriButton/>
         </div>
-       
+        <tableActionRole/>
+
 <card/>
         <actionTable/>
-  
+
     </AuthenticatedLayout>
 </template>

@@ -17,8 +17,12 @@
         "vue": "^3.2.41"
     },
     "dependencies": {
+        "@heroicons/vue": "^2.0.17",
+        "heroicons": "^2.0.17",
         "pinia": "^2.0.33",
         "pinia-plugin-persistedstate": "^3.1.0",
+        "tailgrids": "^2.0.1",
+        "tw-elements": "^1.0.0-beta1",
         "vue-advanced-cropper": "^2.8.8",
         "vue-material-design-icons": "^5.2.0"
     }

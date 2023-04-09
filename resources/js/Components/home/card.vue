@@ -1,4 +1,8 @@
 <script setup>
+import { Link } from "@inertiajs/vue3";
+
+
+
 </script>
 
 <template>
@@ -11,6 +15,8 @@
         >
             <div
                 class="rounded-t-xl w-full h-64 shadow-sm bg-cover"
+            
+                
                 style='background-image: url("https://apod.nasa.gov/apod/image/2208/Cartwheel_Webb_960.jpg");'
             ></div>
 

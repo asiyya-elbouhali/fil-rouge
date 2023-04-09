@@ -1,17 +1,24 @@
-<script setup>
-import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
-import { Head } from '@inertiajs/vue3';
-import card from '@/Components/sb_softwares/Card.vue'
+<script>
+import Layout from '@/Pages/Layout.vue'
+export default {
+  // Using a render function...
+  layout: (h, page) => h(Layout, [page]),
+  // Using shorthand syntax...
+  layout: Layout,
+}
 
 </script>
-
+<script setup>
+import { Head } from "@inertiajs/vue3";
+import SoftwareCard from "@/Components/sb_softwares/SoftwareCard.vue";
+import MainNavLayout from "@/Components/headers/MainNavLayout.vue";
+import theFooter from "@/Components/footer/theFooter.vue";
+</script>
 <template>
-      <Head title="Softwares"/>
+  <!-- <h1> {{ $page.props.auth }}</h1> -->
+  <Head title="Softwares" />
+  <SoftwareCard :softwares="$page.props.softwares" >
 
-<AuthenticatedLayout>
-       <card/>
-       <h2>rdftgyhujiko </h2>
-</AuthenticatedLayout>
-  
-  <h2>esrdtfyuhio</h2>
+</SoftwareCard>
+
 </template>

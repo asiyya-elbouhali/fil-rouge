@@ -7,6 +7,9 @@ module.exports = {
         './storage/framework/views/*.php',
         './resources/views/**/*.blade.php',
         './resources/js/**/*.vue',
+        "./*.html",
+        "./ecommerce/*.html",
+        "./assets/**/*.js",
     ],
 
     theme: {
@@ -18,4 +21,6 @@ module.exports = {
     },
 
     plugins: [require('@tailwindcss/forms')],
+    plugins: [require("tw-elements/dist/plugin")],
+    plugins: [require("tailgrids/plugin")],
 };

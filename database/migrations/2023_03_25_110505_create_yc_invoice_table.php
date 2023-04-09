@@ -17,6 +17,15 @@ return new class extends Migration
             $table->date('date');
             $table->float('tva');
             $table->float('total');
+            $table->boolean('paid');
+
+          $table->unsignedBigInteger('order_id');
+
+            $table->foreign('order_id')
+            ->references('id')
+            ->on('orders')
+            ->onDelete('cascade');
+
             $table->timestamps();
         });
     }

@@ -21,6 +21,8 @@ class InvoiceFactory extends Factory
             'date' => fake()->date(),
             'tva' => fake()->numberBetween(200,2000),
             'total' => fake()->numberBetween(200,2000),
+            'order_id' => fake()->numberBetween(1,10),
+            'paid' => fake()->boolean(),
 
         ];
     }

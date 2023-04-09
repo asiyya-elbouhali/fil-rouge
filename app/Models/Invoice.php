@@ -13,8 +13,8 @@ class Invoice extends Model
         return  $this->hasMany(Payment::class);
       }
       public function order(){
-        return  $this->hasMany(Order::class);
+        return  $this->belongsTo(Order::class);
       }
 
-      
+
 }
