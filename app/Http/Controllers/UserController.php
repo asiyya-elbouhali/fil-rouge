@@ -2,12 +2,13 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Resources\AllSoftwareCollection;
-use App\Models\Order;
-use App\Models\TBDeveloper;
 use App\Models\User;
 use Inertia\Inertia;
+use App\Models\Order;
+use App\Models\TBDeveloper;
 use Illuminate\Http\Request;
+use App\Http\Resources\AllSoftwareCollection;
+use App\Http\Controllers\BusinessCategoryController;
 
 class UserController extends Controller
 {
@@ -30,23 +31,63 @@ class UserController extends Controller
 
     public function getAllTBDeveloper(){
 
+        $softwareController = new SoftwareController();
+        $BusinessCategoryController = new BusinessCategoryController();
+        $ServerController = new ServerController();
+        $KeyStatusController = new KeyStatusController();
+        $OrderStatusController = new OrderStatusController();
+        $KeyController = new KeyController();
+        $OrderController = new OrderController();
+        $LicenceController = new LicenceController();
+        $GatewayController = new GatewayController();
+
+        $AllSoftware = $softwareController->AllSoftware();
+        $AllBusinessCategories = $BusinessCategoryController->AllBusinessCategories();
+        $AllServers = $ServerController->AllServers();
+        $AllKeyStatuses = $KeyStatusController->AllKeyStatuses();
+        $AllOrderStatuses = $OrderStatusController->AllOrderStatuses();
+        $AllKeys = $KeyController->AllKeys();
+        $AllOrders = $OrderController->AllOrders();
+        $AllLicences = $LicenceController->AllLicences();
+        $AllGateways = $GatewayController->AllGateways();
+
+
+
         $tbdevelopers=TBDeveloper::where('type','=','TBDeveloper')->get();
      return Inertia::render('AdminArea',
-        ['tbdevelopers'=>$tbdevelopers]);
+        [
+
+        'tbdevelopers'=> $tbdevelopers,
+         'software' => $AllSoftware,
+         'BusinessCategories' => $AllBusinessCategories,
+         'Servers'=> $AllServers,
+         'KeyStatuses'=> $AllKeyStatuses,
+         'OrderStatuses'=> $AllOrderStatuses,
+         'Keys'=> $AllKeys,
+         'Orders'=> $AllOrders,
+         'Licences'=> $AllLicences,
+         'Gateways'=> $AllGateways,
+
+
+    ]);
 
     }
 
 
-    public function updateRole($id){
+    public function updateRole(Request $request,$id){
 
+        
    $user= User::find($id);
 
     if($user->type !='Blocked') {
-       User::where('id','=',$id)->update(['type'=>'Developer']);
+       User::where('id','=',$id)->update(['type'=> $request->type]);
     }
 
-     return Inertia::render('AdminArea');
-
+    return response()->json([
+        'status' => 'success',
+        'message' => 'Software record updated successfully',
+        'data' => $user,
+    ]);
     }
 
 

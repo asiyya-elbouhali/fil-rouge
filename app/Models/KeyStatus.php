@@ -9,6 +9,11 @@ class KeyStatus extends Model
 {
     use HasFactory;
 
+    protected $fillable =[
+
+      'name',
+      'value'
+    ];
     public function key(){
         return  $this->hasMany(Key::class);
       }

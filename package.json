@@ -24,6 +24,8 @@
         "tailgrids": "^2.0.1",
         "tw-elements": "^1.0.0-beta1",
         "vue-advanced-cropper": "^2.8.8",
-        "vue-material-design-icons": "^5.2.0"
+        "vue-material-design-icons": "^5.2.0",
+        "vue-universal-modal": "^1.1.4",
+        "vue3-modal": "^0.1.6"
     }
 }

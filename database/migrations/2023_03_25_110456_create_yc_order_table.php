@@ -22,11 +22,7 @@ return new class extends Migration
             $table->date('next_due_date');
             $table->boolean('web_hosting');
             $table->boolean('demon_version');
-
-
-
-
-
+            
             $table->unsignedBigInteger('business_categories_id');
             $table->foreign('business_categories_id')
             ->references('id')

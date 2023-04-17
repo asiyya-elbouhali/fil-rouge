@@ -8,7 +8,13 @@ use Illuminate\Database\Eloquent\Model;
 class Licence extends Model
 {
     use HasFactory;
-
+        protected $fillable = [
+            'price',
+            'description',
+            'software_id',
+            'business_categories_id',
+        ];
+    
     public function software(){
         return  $this->belongsTo(Software::class);
       }

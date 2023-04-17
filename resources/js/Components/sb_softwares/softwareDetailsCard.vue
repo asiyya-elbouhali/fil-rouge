@@ -1,12 +1,118 @@
 <script setup>
-// import * as te from 'tw-elements';
-// import paymentForm from '@/Components/sb_payment/paymentForm.vue'
+// to add software
+import { ref, onMounted,reactive, computed } from 'vue';
+import axios from 'axios';
+const props = defineProps(['details','AllBusinessCategories']);
+const csrfToken = ref('');
+const formData = ref({
+  order_date: '',
+  automatically_renew: '',
+  price: '',
+  number_of_device: '',
+  total_before_tax: '',
+  total_after_tax: '',
+  next_due_date: '',
+  web_hosting: '',
+  demon_version: '',
+  business_categories_id: '',
+  user_id: '',
+  software_id: '',
+  order_status_id: '',
+  server_id: '',
 
 
-const props = defineProps(['details']);
+});
 
 
+const fetchCsrfToken = async () => {
+  try {
+    const response = await axios.get('/csrf-token');
+    csrfToken.value = response.data.csrfToken;
+    // console.log(csrfToken.value)
+  } catch (error) {
+    // console.error(error);
+  }
+};
 
+const submitForm = async () => {
+  try {
+    const data = new FormData();
+    data.append('order_date', formData.value.order_date);
+    // data.append('automatically_renew', formData.value.automatically_renew);
+    data.append('automatically_renew', isActive ? 1 : 0);
+
+    data.append('price', formData.value.price);
+    data.append('number_of_device', formData.value.number_of_device);
+    data.append('total_before_tax', formData.value.total_before_tax);
+    data.append('next_due_date', formData.value.next_due_date);
+    // data.append('web_hosting', formData.value.web_hosting);
+    data.append('web_hosting', WBActive ? 1 : 0);
+
+    // data.append('demon_version', formData.value.demon_version);
+    formData.append('demon_version', DemoActive ? 1 : 0);
+    data.append('business_categories_id', formData.value.business_categories_id);
+    data.append('user_id', formData.value.user_id);
+    data.append('software_id', formData.value.software_id);
+    data.append('order_status_id', formData.value.order_status_id);
+    data.append('server_id', formData.value.server_id);
+
+
+    const response = await axios.post('/addOrder',data, {
+      headers: {
+        // 'Content-Type': 'multipart/form-data',
+        'X-CSRF-TOKEN': csrfToken.value,
+      },
+    });
+    // Handle successful response
+    console.log("ok")
+    console.log(response.data)
+     const  button = document.getElementById('closeModel');
+            button.click();
+
+  } catch (error) {
+    // Handle error response
+  console.log("error")
+ console.error(error.response.data);
+  }
+};
+onMounted(fetchCsrfToken);
+
+
+const deleteOrder = async (id) => {
+  try {
+    const response = await axios.delete(`/order/${id}`);
+
+    console.log(response.data)
+
+  } catch (error) {
+    console.error(error);
+  }
+};
+
+
+</script>
+<script>
+export default {
+  data() {
+    return {
+      isActive: false,
+      DemoActive : false,
+      WBActive : false
+    }
+  },
+  computed: {
+    inputValue() {
+      return this.isActive ? 1 : 0;
+    },
+
+    inputDemoValue() {
+      return this.DemoActive ? 1 : 0;
+    },
+    inputWHValue() {
+      return this.WBActive ? 1 : 0;
+    }
+  }
+}
 </script>
 <template>
   <!-- <h2 v-if="details">2</h2> -->
@@ -23,28 +129,28 @@ const props = defineProps(['details']);
       <img class="mt-6 w-full" alt="image of a girl posing"
         src="https://5.imimg.com/data5/SELLER/Default/2021/12/TK/QQ/BA/48454907/kasperskypro-1-copy-1000x1000.png" />
     </div>
-    <!-- <div class="md:hidden">
-      <img class="w-full" alt="image of a girl posing" src="https://i.ibb.co/QMdWfzX/component-image-one.png" />
-      <div class="flex items-center justify-between mt-3 space-x-4 md:space-x-0">
-        <img alt="image-tag-one" class="md:w-48 md:h-48 w-full" src="https://i.ibb.co/cYDrVGh/Rectangle-245.png" />
-        <img alt="image-tag-one" class="md:w-48 md:h-48 w-full" src="https://i.ibb.co/f17NXrW/Rectangle-244.png" />
-        <img alt="image-tag-one" class="md:w-48 md:h-48 w-full" src="https://i.ibb.co/cYDrVGh/Rectangle-245.png" />
-        <img alt="image-tag-one" class="md:w-48 md:h-48 w-full" src="https://i.ibb.co/f17NXrW/Rectangle-244.png" />
-      </div>
-    </div> -->
+
 
 
     <div class="xl:w-2/5 md:w-1/2 lg:ml-8 md:ml-6 md:mt-0 mt-6">
+
+
+      <form
+      @submit.prevent="submitForm"
+      >
       <div class="border-b border-gray-200 pb-6">
         <p class="text-sm leading-none text-gray-600 dark:text-gray-300 ">{{ details.name }}</p>
         <h1 class="lg:text-2xl text-xl font-semibold lg:leading-6 leading-7 text-gray-800 dark:text-white mt-2">
           {{ details.name }} Pack</h1>
+          <input type="text" hidden :value=" details.name">
+
       </div>
       <div class="py-4 border-b border-gray-200 flex items-center justify-between">
         <p class="text-base leading-4 text-gray-800 dark:text-gray-300">Version</p>
 
         <div class="flex items-center justify-center">
           <p class="text-sm leading-none text-gray-600 dark:text-gray-300">{{ details.version }}</p>
+          <input type="text" hidden :value=" details.version">
           <div class="w-6 h-6 bg-gradient-to-b from-gray-900 to-indigo-500 ml-3 mr-4 cursor-pointer"></div>
           <svg class="cursor-pointer text-gray-300 dark:text-white" width="6" height="10" viewBox="0 0 6 10" fill="none"
             xmlns="http://www.w3.org/2000/svg">
@@ -56,73 +162,49 @@ const props = defineProps(['details']);
 
       <div class="py-4 border-b border-gray-200 flex items-center justify-between">
         <!-- start  Button Number of device  -->
-        <div class="flex justify-center">
-          <div>
-            <div class="relative " data-te-dropdown-ref>
-              <button
-                class="flex items-center border w-44  border-gray-700 whitespace-nowrap rounded  bg-white px-6 pt-2.5 pb-2 text-xs font-medium uppercase leading-normal text-black  shadow-[0_4px_4px_-4px_#3b71ca]  transition duration-150 ease-in-out hover:bg-primary-600     focus:ring-0 active:bg-primary-700 active:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] motion-reduce:transition-none"
-                type="button" id="dropdownMenuButton1d" data-te-dropdown-toggle-ref aria-expanded="false"
-                data-te-ripple-init data-te-ripple-color="light">
-                1 Device / 1 Year
-                <span class="ml-3 w-2">
-                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="h-5 w-5">
-                    <path fill-rule="evenodd"
-                      d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z"
-                      clip-rule="evenodd" />
-                  </svg>
-                </span>
-              </button>
-              <ul
-                class="absolute z-[1000] w-full float-left m-0 hidden min-w-max list-none overflow-hidden rounded-lg border-none bg-white bg-clip-padding text-left text-base shadow-lg dark:bg-neutral-700 [&[data-te-dropdown-show]]:block"
-                aria-labelledby="dropdownMenuButton1d" data-te-dropdown-menu-ref>
-                <li>
-                  <a class="block w-full  whitespace-nowrap bg-transparent py-2 px-4 text-sm font-normal text-neutral-700 hover:bg-neutral-100 active:text-neutral-800 active:no-underline disabled:pointer-events-none disabled:bg-transparent disabled:text-neutral-400 dark:text-neutral-200 dark:hover:bg-neutral-600"
-                    href="#" data-te-dropdown-item-ref>1 Device / 1 Year</a>
-                </li>
-                <li>
-                  <hr
-                    class="my-2 h-0 border border-t-0 border-solid border-neutral-700 opacity-25 dark:border-neutral-200" />
 
-                  <a class="block w-full whitespace-nowrap bg-transparent py-2 px-4 text-sm font-normal text-neutral-700 hover:bg-neutral-100 active:text-neutral-800 active:no-underline disabled:pointer-events-none disabled:bg-transparent disabled:text-neutral-400 dark:text-neutral-200 dark:hover:bg-neutral-600"
-                    href="#" data-te-dropdown-item-ref>2 Device / 1 Year</a>
-                </li>
-                <li>
-                  <hr
-                    class="my-2 h-0 border border-t-0 border-solid border-neutral-700 opacity-25 dark:border-neutral-200" />
+        <!-- <div class="flex justify-center">
+            <div> -->
+              <!-- <div class="relative " data-te-dropdown-ref> -->
+                  <!-- <select name="" id="" class="flex items-center border w-44  border-gray-700 whitespace-nowrap rounded  bg-white px-6 pt-2.5 pb-2 text-xs font-medium uppercase leading-normal text-black  shadow-[0_4px_4px_-4px_#3b71ca]  transition duration-150 ease-in-out hover:bg-primary-600     focus:ring-0 active:bg-primary-700 active:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] motion-reduce:transition-none"
+                  type="">
+             <option value="">1 Device/1 Year</option>
+             <option value="">2 Device / 1 Year</option>
+             <option value="">3 Device / 2 Year</option>
 
-                  <a class="block w-full whitespace-nowrap bg-transparent py-2 px-4 text-sm font-normal text-neutral-700 hover:bg-neutral-100 active:text-neutral-800 active:no-underline disabled:pointer-events-none disabled:bg-transparent disabled:text-neutral-400 dark:text-neutral-200 dark:hover:bg-neutral-600"
-                    href="#" data-te-dropdown-item-ref>3 Device / 1 Year</a>
-                </li>
-                <hr
-                  class="my-2 h-0 border border-t-0 border-solid border-neutral-700 opacity-25 dark:border-neutral-200" />
+            </select> -->
+              <!-- </div> -->
+            <!-- </div>
+          </div> -->
 
-                <li>
-                  <a class="block w-full whitespace-nowrap bg-transparent py-2 px-4 text-sm font-normal text-neutral-700 hover:bg-neutral-100 active:text-neutral-800 active:no-underline disabled:pointer-events-none disabled:bg-transparent disabled:text-neutral-400 dark:text-neutral-200 dark:hover:bg-neutral-600"
-                    href="#" data-te-dropdown-item-ref>3 Device / 2 Years</a>
-                </li>
-              </ul>
-            </div>
+
+          <div class="sm:col-span-3">
+          <!-- <label for="trial" class="block text-sm font-medium leading-6 text-gray-900"> Business Category  </label> -->
+          <div class="mt-2">
+            <select 
+            v-model="formData.business_categories_id" 
+            name="business_categories_id" 
+            class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+            required>
+            <option value=""  >Small Business</option>
+
+        <option v-for="BCateg in BusinessCategories" :value="BCateg.id">{{ BCateg.name }}</option>
+      </select>
           </div>
         </div>
         <!-- end  Button Number of device  -->
+
 
 
         <div class="flex items-center justify-center">
 
           <!-- start  Button Business Category  -->
 
-          <div class="flex justify-center">
+          <!-- <div class="flex justify-center">
             <div>
               <div class="relative " data-te-dropdown-ref>
                   <select name="" id="" class="flex items-center border w-44  border-gray-700 whitespace-nowrap rounded  bg-white px-6 pt-2.5 pb-2 text-xs font-medium uppercase leading-normal text-black  shadow-[0_4px_4px_-4px_#3b71ca]  transition duration-150 ease-in-out hover:bg-primary-600     focus:ring-0 active:bg-primary-700 active:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] motion-reduce:transition-none"
-                  type="button">
-                  <!-- <span class="ml-0.9 w-2">
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="h-5 w-5">
-                      <path fill-rule="evenodd"
-                        d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z"
-                        clip-rule="evenodd" />
-                    </svg>
-                  </span> -->
+                  type="">
              <option value="">Small Business</option>
              <option value="">Medium Business</option>
              <option value=""> Entreprise</option>
@@ -130,61 +212,57 @@ const props = defineProps(['details']);
             </select>
               </div>
             </div>
+          </div> -->
+
+          
+        <div class="sm:col-span-3">
+          <!-- <label for="trial" class="block text-sm font-medium leading-6 text-gray-900"> Business Category  </label> -->
+          <div class="mt-2">
+            <select 
+            v-model="formData.business_categories_id" 
+            name="business_categories_id" 
+            class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+            required>
+            <option value="">Small Business</option>
+
+        <option v-for="BCateg in AllBusinessCategories" :value="BCateg.id">{{ BCateg.name }}</option>
+      </select>
           </div>
+        </div>
           <!-- end  Button Business Category  -->
 
-
-
-
-
-
-
-
-
-          <!-- <svg class="text-gray-300 dark:text-white cursor-pointer" width="6" height="10" viewBox="0 0 6 10" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M1 1L5 5L1 9" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round" />
-            </svg> -->
         </div>
       </div>
+
       <!-- start Renew -->
-
-
       <div class="py-4 border-b border-gray-200 flex items-center justify-between">
         <p class="text-base leading-4 text-gray-800 dark:text-gray-300">Renewal</p>
-
-
 
         <div class="flex items-center justify-center">
 
 
 
 
-
-
           <label for="toggleThree" class="flex cursor-pointer select-none items-center">
-            <div class="relative">
-              <input type="checkbox" id="toggleThree" class="sr-only" />
-              <div class="block h-8 w-14 rounded-full bg-[#E5E7EB]"></div>
-              <div
-                class="dot absolute left-1 top-1 flex h-6 w-6 items-center justify-center rounded-full bg-white transition">
-                <span class="active hidden">
-                  <svg width="11" height="8" viewBox="0 0 11 8" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path
-                      d="M10.0915 0.951972L10.0867 0.946075L10.0813 0.940568C9.90076 0.753564 9.61034 0.753146 9.42927 0.939309L4.16201 6.22962L1.58507 3.63469C1.40401 3.44841 1.11351 3.44879 0.932892 3.63584C0.755703 3.81933 0.755703 4.10875 0.932892 4.29224L0.932878 4.29225L0.934851 4.29424L3.58046 6.95832C3.73676 7.11955 3.94983 7.2 4.1473 7.2C4.36196 7.2 4.55963 7.11773 4.71406 6.9584L10.0468 1.60234C10.2436 1.4199 10.2421 1.1339 10.0915 0.951972ZM4.2327 6.30081L4.2317 6.2998C4.23206 6.30015 4.23237 6.30049 4.23269 6.30082L4.2327 6.30081Z"
-                      fill="blue" stroke="blue" stroke-width="2"></path>
-                  </svg>
-                </span>
-                <span class="inactive text-body-color">
-                  <svg class="h-4 w-4 stroke-current" fill="none" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-                  </svg>
-                </span>
-              </div>
-            </div>
-          </label>
-
-
-
+    <div class="relative">
+      <input type="checkbox"  id="toggleThree" class="sr-only" v-model="isActive" />
+      <div class="block h-8 w-14 rounded-full bg-[#E5E7EB]"></div>
+      <div class="dot absolute left-1 top-1 flex h-6 w-6 items-center justify-center rounded-full  transition">
+        <span :class="{ active: isActive, hidden: !isActive } ">
+          <svg width="11" height="8" viewBox="0 0 11 8" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M10.0915 0.951972L10.0867 0.946075L10.0813 0.940568C9.90076 0.753564 9.61034 0.753146 9.42927 0.939309L4.16201 6.22962L1.58507 3.63469C1.40401 3.44841 1.11351 3.44879 0.932892 3.63584C0.755703 3.81933 0.755703 4.10875 0.932892 4.29224L0.932878 4.29225L0.934851 4.29424L3.58046 6.95832C3.73676 7.11955 3.94983 7.2 4.1473 7.2C4.36196 7.2 4.55963 7.11773 4.71406 6.9584L10.0468 1.60234C10.2436 1.4199 10.2421 1.1339 10.0915 0.951972ZM4.2327 6.30081L4.2317 6.2998C4.23206 6.30015 4.23237 6.30049 4.23269 6.30082L4.2327 6.30081Z" fill="blue" stroke="blue" stroke-width="2"></path>
+          </svg>
+        </span>
+        <span :class="{ inactive: !isActive, hidden: isActive }">
+          <svg class="h-4 w-4 stroke-current" fill="none" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+          </svg>
+        </span>
+      </div>
+    </div>
+  </label>
+    <!-- this hidden input that handels the boolean value (0/1) onClick the toggel to choose a renew licence or not -->
+  <input name="Renew" type="hidden" :value="inputValue">
 
 
 
@@ -193,15 +271,91 @@ const props = defineProps(['details']);
         </div>
       </div>
 
+
+      <!-- Demo Version -->
+      <div class="py-4 border-b border-gray-200 flex items-center justify-between">
+        <p class="text-base leading-4 text-gray-800 dark:text-gray-300">Demo Version</p>
+
+        <div class="flex items-center justify-center">
+
+
+
+
+          <label for="DemoToggleThree" class="flex cursor-pointer select-none items-center">
+    <div class="relative">
+      <input type="checkbox" id="DemoToggleThree" class="sr-only" v-model="DemoActive" />
+      <div class="block h-8 w-14 rounded-full bg-[#E5E7EB]"></div>
+      <div class="dot absolute left-1 top-1 flex h-6 w-6 items-center justify-center rounded-full  transition">
+        <span :class="{ active: DemoActive, hidden: !DemoActive } ">
+          <svg width="11" height="8" viewBox="0 0 11 8" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M10.0915 0.951972L10.0867 0.946075L10.0813 0.940568C9.90076 0.753564 9.61034 0.753146 9.42927 0.939309L4.16201 6.22962L1.58507 3.63469C1.40401 3.44841 1.11351 3.44879 0.932892 3.63584C0.755703 3.81933 0.755703 4.10875 0.932892 4.29224L0.932878 4.29225L0.934851 4.29424L3.58046 6.95832C3.73676 7.11955 3.94983 7.2 4.1473 7.2C4.36196 7.2 4.55963 7.11773 4.71406 6.9584L10.0468 1.60234C10.2436 1.4199 10.2421 1.1339 10.0915 0.951972ZM4.2327 6.30081L4.2317 6.2998C4.23206 6.30015 4.23237 6.30049 4.23269 6.30082L4.2327 6.30081Z" fill="blue" stroke="blue" stroke-width="2"></path>
+          </svg>
+        </span>
+        <span :class="{ inactive: !DemoActive, hidden: DemoActive }">
+          <svg class="h-4 w-4 stroke-current" fill="none" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+          </svg>
+        </span>
+      </div>
+    </div>
+  </label>
+    <!-- this hidden input that handels the boolean value (0/1) onClick the toggel to choose a DemoVersion of the software or not -->
+    <input name="DemoVersion" type="hidden" :value="inputDemoValue">
+
+
+
+
+
+        </div>
+      </div>
+
+
+      <!-- Web Hosting -->
+        <div class="py-4 border-b border-gray-200 flex items-center justify-between">
+        <p class="text-base leading-4 text-gray-800 dark:text-gray-300">Web Hosting</p>
+
+        <div class="flex items-center justify-center">
+
+          <label for="WBToggleThree" class="flex cursor-pointer select-none items-center">
+    <div class="relative">
+      <input type="checkbox" id="WBToggleThree" class="sr-only" v-model="WBActive" />
+      <div class="block h-8 w-14 rounded-full bg-[#E5E7EB]"></div>
+      <div class="dot absolute left-1 top-1 flex h-6 w-6 items-center justify-center rounded-full  transition">
+        <span :class="{ active: WBActive, hidden: !WBActive } ">
+          <svg width="11" height="8" viewBox="0 0 11 8" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M10.0915 0.951972L10.0867 0.946075L10.0813 0.940568C9.90076 0.753564 9.61034 0.753146 9.42927 0.939309L4.16201 6.22962L1.58507 3.63469C1.40401 3.44841 1.11351 3.44879 0.932892 3.63584C0.755703 3.81933 0.755703 4.10875 0.932892 4.29224L0.932878 4.29225L0.934851 4.29424L3.58046 6.95832C3.73676 7.11955 3.94983 7.2 4.1473 7.2C4.36196 7.2 4.55963 7.11773 4.71406 6.9584L10.0468 1.60234C10.2436 1.4199 10.2421 1.1339 10.0915 0.951972ZM4.2327 6.30081L4.2317 6.2998C4.23206 6.30015 4.23237 6.30049 4.23269 6.30082L4.2327 6.30081Z" fill="blue" stroke="blue" stroke-width="2"></path>
+          </svg>
+        </span>
+        <span :class="{ inactive: !WBActive, hidden: WBActive }">
+          <svg class="h-4 w-4 stroke-current" fill="none" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+          </svg>
+        </span>
+      </div>
+    </div>
+  </label>
+    <!-- this hidden input that handels the boolean value (0/1) onClick the toggel to choose WebHosting or not -->
+    <input name="WebHosting" type="hidden" :value="inputWHValue">
+
+
+
+
+
+        </div>
+      </div>
+
+
+
+
       <div class="flex justify-between my-9 items-center w-full">
             <p class="text-base dark:text-white font-semibold leading-4 text-gray-800">Total</p>
             <p class="text-base dark:text-gray-300 font-semibold leading-4 text-gray-600">$36.00</p>
           </div>
 
-      <!-- End Renew  -->
 
-      <button
-        class="dark:bg-white dark:text-gray-900 dark:hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-800 text-base flex items-center justify-center leading-none text-white bg-gray-800 w-full py-4 hover:bg-gray-700 focus:outline-none">
+      <button 
+        class="dark:bg-white dark:text-gray-900 dark:hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-800 text-base flex items-center justify-center leading-none text-white bg-gray-800 w-full py-4 hover:bg-gray-700 focus:outline-none" 
+        >
         <svg xmlns="http://www.w3.org/2000/svg" xml:space="preserve" class="mr-3" width="30" height="20" version="1.1"
           shape-rendering="geometricPrecision" text-rendering="geometricPrecision" image-rendering="optimizeQuality"
           fill-rule="evenodd" clip-rule="evenodd" viewBox="0 0 512 434.91" xmlns:xlink="http://www.w3.org/1999/xlink"
@@ -275,6 +429,7 @@ const props = defineProps(['details']);
         </div>
       </div>
       <div>
+
         <div class="border-b py-4 border-gray-200">
           <div data-menu class="flex justify-between items-center cursor-pointer">
             <p class="text-base leading-4 text-gray-800 dark:text-gray-300">Contact us</p>
@@ -291,6 +446,9 @@ const props = defineProps(['details']);
             have any questions on how to return your item to us, contact us.</div>
         </div>
     </div>
+    <button         
+>submit</button>
+  </form>
   </div>
 </div>
 <paymentForm/>

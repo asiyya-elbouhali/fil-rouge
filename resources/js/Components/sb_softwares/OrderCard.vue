@@ -3,7 +3,7 @@
 import { Link } from '@inertiajs/vue3';
 import downloadButton from '@/Components/shared/buttons/downloadButton.vue'
 
-const props = defineProps(['softwares']);
+  const props = defineProps(['softwares']);
 
 </script>
 

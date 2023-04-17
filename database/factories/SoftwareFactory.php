@@ -21,7 +21,7 @@ class SoftwareFactory extends Factory
             'version' => fake()->word(),
             'add_date' => fake()->date(),
             'compatibility' => fake()->word(),
-            'developper' => fake()->name(),
+            'developer' => fake()->name(),
             'image' => fake()->image(),
             'description' => fake()->text(),
             'url' => fake()->url(),

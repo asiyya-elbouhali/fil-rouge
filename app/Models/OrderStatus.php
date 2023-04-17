@@ -9,6 +9,11 @@ class OrderStatus extends Model
 {
     use HasFactory;
 
+    protected $fillable =[
+      'name',
+      'value'
+    ];
+    
     public function order(){
         return  $this->hasMany(Order::class);
       }

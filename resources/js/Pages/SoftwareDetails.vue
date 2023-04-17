@@ -1,21 +1,29 @@
+<script>
+import Layout from '@/Pages/Layout.vue'
+
+export default {
+  // Using a render function...
+  layout: (h, page) => h(Layout, [page]),
+
+  // Using shorthand syntax...
+  layout: Layout,
+}
+</script>
+
 <script setup>
 import { Head } from "@inertiajs/vue3";
 import softwareDetailsCard from "@/Components/sb_softwares/softwareDetailsCard.vue";
 import MainNavLayout from "@/Components/headers/MainNavLayout.vue";
 import theFooter from "@/Components/footer/theFooter.vue";
-import OrderCard from "@/Components/sb_softwares/OrderCard.vue";
+import paymentForm from "@/Components/sb_payment/paymentForm.vue";
 </script>
 <template>
 
-  <!-- <h1> {{ $page.props.auth }}</h1> -->
-  <MainNavLayout />
   <Head title="Softwares" />
+<softwareDetailsCard  :details=$page.props.details
+                      :AllBusinessCategories=$page.props.AllBusinessCategories
+ />
 
-<softwareDetailsCard  :details=$page.props.details >
+<paymentForm />
 
-</softwareDetailsCard>
-<order-card>
-</order-card>
-
-  <theFooter />
 </template>

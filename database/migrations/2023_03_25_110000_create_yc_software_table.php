@@ -15,13 +15,13 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->string('version');
-            $table->date('add_date');
+            $table->date('add_date')->nullable();
             $table->string('compatibility');
-            $table->string('developper');
-            $table->string('image');
+            $table->string('developer');
+            $table->string('image')->nullable();
             $table->string('description');
-            $table->string('url');
-            $table->string('icon');
+            $table->string('url')->nullable();
+            $table->string('icon')->nullable();
             $table->timestamps();
         });
     }

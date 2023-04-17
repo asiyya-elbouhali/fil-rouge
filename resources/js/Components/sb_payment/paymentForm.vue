@@ -7,29 +7,17 @@
 
 
 <div class="min-w-screen min-h-screen bg-gray-50 py-5">
-    <div class="px-5">
-        <div class="mb-2">
-            <a href="#" class="focus:outline-none hover:underline text-gray-500 text-sm"><i class="mdi mdi-arrow-left text-gray-400"></i>Back</a>
-        </div>
-        <div class="mb-2">
-            <h1 class="text-3xl md:text-5xl font-bold text-gray-600">Checkout.</h1>
-        </div>
-        <div class="mb-5 text-gray-400">
-            <a href="#" class="focus:outline-none hover:underline text-gray-500">Home</a> / <a href="#" class="focus:outline-none hover:underline text-gray-500">Cart</a> / <span class="text-gray-600">Checkout</span>
-        </div>
-    </div>
+
     <div class="w-full bg-white border-t border-b border-gray-200 px-5 py-10 text-gray-800">
         <div class="w-full">
             <div class="-mx-3 md:flex items-start">
                 <div class="px-3 md:w-7/12 lg:pr-10">
                     <div class="w-full mx-auto text-gray-800 font-light mb-6 border-b border-gray-200 pb-6">
                         <div class="w-full flex items-center">
-                            <div class="overflow-hidden rounded-lg w-16 h-16 bg-gray-50 border border-gray-200">
-                                <img src="https://images.unsplash.com/photo-1572635196237-14b3f281503f?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1160&q=80" alt="">
-                            </div>
+                            <h1 class="font-bold text-2xl">Total: </h1>
+
                             <div class="flex-grow pl-3">
-                                <h6 class="font-semibold uppercase text-gray-600">Ray Ban Sunglasses.</h6>
-                                <p class="text-gray-400">x 1</p>
+                                         
                             </div>
                             <div>
                                 <span class="font-semibold text-gray-600 text-xl">$210</span><span class="font-semibold text-gray-600 text-sm">.00</span>

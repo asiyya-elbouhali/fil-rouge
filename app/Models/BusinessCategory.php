@@ -11,7 +11,7 @@ class BusinessCategory extends Model
 
  protected $fillable = [
         'name',
-        'number_of_device',
+        'number_of_devices',
         'description',
     ];
 

@@ -9,6 +9,10 @@ import { ZiggyVue } from '../../vendor/tightenco/ziggy/dist/vue.m';
 import { createPinia } from 'pinia'
 import piniaPluginPersistedstate from 'pinia-plugin-persistedstate'
 
+import 'vue-universal-modal/dist/index.css';
+import VueUniversalModal from 'vue-universal-modal';
+
+
 const pinia = createPinia()
 pinia.use(piniaPluginPersistedstate)
 
@@ -21,6 +25,9 @@ createInertiaApp({
         return createApp({ render: () => h(App, props) })
             .use(plugin)
             .use(pinia)
+            .use(VueUniversalModal, {
+                        teleportTarget: '#modals',
+                        })
             .use(ZiggyVue, Ziggy)
             .mount(el);
     },

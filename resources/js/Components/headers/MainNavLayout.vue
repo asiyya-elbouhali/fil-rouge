@@ -71,6 +71,12 @@ import Logout from 'vue-material-design-icons/Logout.vue';
              href="/AdminArea"
              >Admin space </Link>
         </span>
+        <span class="cursor-pointer rounded-sm py-1 px-2 text-sm font-medium
+                     hover:bg-gray-100">
+             <Link
+             href="/DeveloperArea"
+             >Developer space </Link>
+        </span>
     </div>
     <!-- <div class="flex items-center justify-center bg-[#EFF2F5] p-1 rouded-full">
         <Magnify class="p-1" :size="22" fillColor="#64676B"/>
