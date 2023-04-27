@@ -68,4 +68,10 @@ class User extends Authenticatable
   protected static $singleTableTypeField = 'type';
   protected static $singleTableSubclasses = [Developer::class,TBDeveloper::class,Blocked::class];
 
+
+  public function order()
+  {
+      return $this->hasMany(Order::class);
+  }
+
 }

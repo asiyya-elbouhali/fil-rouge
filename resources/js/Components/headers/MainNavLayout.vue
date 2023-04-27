@@ -1,5 +1,6 @@
 <script setup>
-import { Link } from "@inertiajs/vue3";
+
+import { Link,usePage } from "@inertiajs/vue3";
 
 import Magnify from 'vue-material-design-icons/Magnify.vue';
 import Home from 'vue-material-design-icons/Magnify.vue';
@@ -14,8 +15,34 @@ import Bell from 'vue-material-design-icons/Bell.vue';
 import Logout from 'vue-material-design-icons/Logout.vue';
 
  const props = defineProps(['canLogin','canRegister']);
-</script>
+//  const test = ref(false);
 
+//  function  toggle(){
+
+// this.test = ! this.test
+// }
+// const user=usePage().props.auth.user
+// const user={"type":""}
+</script>
+<script>
+export default{
+
+  data(){
+
+    return{
+     test:false
+    }
+  },
+  methods:{
+    toggle(){
+
+      this.test = ! this.test
+    }
+  }
+}
+
+
+</script>
 
 <template>
 <div id="MainNav" class="bg-white">
@@ -26,13 +53,20 @@ import Logout from 'vue-material-design-icons/Logout.vue';
       <!-- Logo SoftBusinesss -->
       
   <div class="flex gap-x-2 py-1 px-2 w-25">
+ 
+
     <Link
              href="/"
-             >
-      <img src="/images/softbusiness-logo.png" alt="" >
+            >
+      <img class="md:flex hidden " src="/images/softbusiness-logo.png" alt="" >
     </Link>
 
-      </div>
+    <Link
+             href="/"
+            >
+      <img class="md:flex lg:hidden  " src="/images/MobileLogo.png" alt="" >
+    </Link>
+       </div>
 
       <!-- <div class="flex gap-x-2 py-1 px-2">
         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-500" viewBox="0 0 20 20" fill="currentColor">
@@ -40,42 +74,54 @@ import Logout from 'vue-material-design-icons/Logout.vue';
         </svg>
         <span class="text-sm font-medium">Morocco</span>
       </div> -->
-      <div class="flex-auto ">
+      <div class="flex-auto max-sm:hidden " :class="{'toggle':test}">
         <span class="cursor-pointer rounded-sm py-1 px-2 text-sm font-medium
                      hover:bg-gray-100">
              <Link
              href="/"
-             >Home</Link>
+             >Home </Link>
         </span>
         <span class="cursor-pointer rounded-sm py-1 px-2 text-sm font-medium
                      hover:bg-gray-100">
              <Link
-             href="/softwares"
+             href="/AllSoftwares"
              >Software</Link>
         </span>
-        <!-- <span class="cursor-pointer rounded-sm py-1 px-2 text-sm font-medium
-                     hover:bg-gray-100">
-             <Link
-             href="/categorie"
-             >Categorie</Link>
-        </span> -->
-           <span class="cursor-pointer rounded-sm py-1 px-2 text-sm font-medium
+      <span 
+      v-if="usePage().props.auth.user">
+           <span 
+           v-if=" usePage().props.auth.user.type =='user'"
+
+           class="cursor-pointer rounded-sm py-1 px-2 text-sm font-medium
                      hover:bg-gray-100">
              <Link
              href="/ClientArea"
              >My space </Link>
         </span>
-                   <span class="cursor-pointer rounded-sm py-1 px-2 text-sm font-medium
+        <span 
+        v-if=" usePage().props.auth.user.type=='developer'|| usePage().props.auth.user.type=='admin'"
+        class="cursor-pointer rounded-sm py-1 px-2 text-sm font-medium
+                     hover:bg-gray-100">
+             <Link
+             href="/ClientArea"
+             >Developer space </Link>
+        </span>
+        <span 
+        v-if=" usePage().props.auth.user.type =='admin'"
+
+        class="cursor-pointer rounded-sm py-1 px-2 text-sm font-medium
                      hover:bg-gray-100">
              <Link
              href="/AdminArea"
              >Admin space </Link>
         </span>
+      </span>
+
         <span class="cursor-pointer rounded-sm py-1 px-2 text-sm font-medium
                      hover:bg-gray-100">
              <Link
-             href="/DeveloperArea"
-             >Developer space </Link>
+             href="/about"
+             >About</Link>
         </span>
     </div>
     <!-- <div class="flex items-center justify-center bg-[#EFF2F5] p-1 rouded-full">
@@ -96,7 +142,12 @@ import Logout from 'vue-material-design-icons/Logout.vue';
 
         >
     </div> -->
+
+
     <span class="cursor-pointer rounded-sm py-1 px-2 text-sm font-medium hover:bg-gray-100"><Link href="/BecomeDeveloper">Become a Developper</Link> </span>
+       <button class="lg:hidden max-sm:block md:hidden" @click=toggle() >
+        test
+       </button>
 
     <Link v-if="$page.props.auth.user"
         class="w-1/12"
@@ -107,8 +158,8 @@ import Logout from 'vue-material-design-icons/Logout.vue';
         <div class="flex items-center gap-3 hover:bg-gray-200 px-2 py-2.5 rounded-lg">
     <Logout
          class="pl-2"
-         :size="30"/>
-         <span>Logout</span>
+         :size="20"/>
+         <span class="max-sm:hidden">Logout</span>
         </div>
     </Link>
     <a v-else
@@ -121,7 +172,7 @@ import Logout from 'vue-material-design-icons/Logout.vue';
     <Logout
          class="pl-2"
          :size="30"/>
-         <span>Login</span>
+         <span class="max-sm:hidden">Login</span>
         </div>
     </a>
 
@@ -135,4 +186,514 @@ import Logout from 'vue-material-design-icons/Logout.vue';
 
 </template>
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<style>
+ @media (max-width: 640px) {
+.toggle {
+ 
+    width: 100%;
+    position: absolute;
+    display: flex;
+    flex-direction: column;
+    left: 0;
+    padding: 20px;
+    top: 10%;
+    background-color: #fff;
+  }
+}
+
+</style>
 

@@ -73,12 +73,12 @@ class UserController extends Controller
 
     }
 
+    // public function 
 
     public function updateRole(Request $request,$id){
 
         
    $user= User::find($id);
-
     if($user->type !='Blocked') {
        User::where('id','=',$id)->update(['type'=> $request->type]);
     }

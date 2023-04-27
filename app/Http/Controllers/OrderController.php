@@ -2,7 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Invoice;
+use App\Models\Licence;
 use App\Models\Order;
+use App\Models\Software;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
@@ -14,7 +17,9 @@ class OrderController extends Controller
      */
     public function index()
     {
-        //
+        $orders = Order::paginate(3);
+
+        return $orders;
     }
 
 
@@ -22,18 +27,35 @@ class OrderController extends Controller
 
     public function AllOrders()
     {
-        $orders=Order::orderBy('id')->get();
+        $orders = Order::with('user', 'software', 'orderStatus','server', 'businessCategory','key')->orderBy('id')->get();
+        //    dd($orders);
         return $orders;
     }
 
+
+
     public function AllMyOrders()
     {
-        $myOrders = Order::orderBy('created_at')
+        $myOrders = Order::with('software', 'orderStatus')->orderBy('created_at')
         ->where('user_id', Auth::id())
         ->get();
+        $mySoftware = Software::orderBy('created_at')
+        ->where('user_id', Auth::id())
+        ->get();
+        $myInvoiceIds = $myOrders->pluck('id')->toArray();
+    
+        $myInvoices = Invoice::whereIn('order_id', $myInvoiceIds)
+                              ->orderBy('created_at')
+                              ->get();
+     
 
-        return $myOrders;
+        return Inertia::render('ClientArea',[
+            'myOrders'=>$myOrders,
+            'myInvoices'=>$myInvoices,
+            'mySoftware'=>$mySoftware
+        ]);
     }
+
 
 
 
@@ -50,9 +72,10 @@ class OrderController extends Controller
      */
     public function store(Request $request)
     {
+        // return("stoooore".$request);
+        // return ($request);
         $validatedData = $request->validate([
-            'order_date' => 'required',
-            'automatically_renew' => 'required',
+             'automatically_renew' => 'required',
             'price' => 'required',
             'number_of_device' => 'required',
             'total_before_tax' => 'required',

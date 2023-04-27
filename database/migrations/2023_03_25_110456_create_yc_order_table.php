@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('orders', function (Blueprint $table) {
             $table->id();
-            $table->date('order_date');
+            $table->date('order_date')->nullable();
             $table->boolean('automatically_renew');
             $table->float('price');
             $table->integer('number_of_device');

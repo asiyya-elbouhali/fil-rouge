@@ -20,7 +20,7 @@ class Licence extends Model
       }
 
       public function businessCategory(){
-        return  $this->belongsTo(BusinessCategory::class);
+        return  $this->belongsTo(BusinessCategory::class, 'business_categories_id');
       }
 
 }

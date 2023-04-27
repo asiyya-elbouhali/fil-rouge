@@ -20,6 +20,8 @@ class Software extends Model
         'description',
         'url',
         'icon',
+        'user_id',
+
     ];
 
 

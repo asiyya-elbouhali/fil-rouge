@@ -12,7 +12,9 @@ class KeyStatusController extends Controller
      */
     public function index()
     {
-        //
+        $keyStatuses = KeyStatus::paginate(3);
+
+        return $keyStatuses;
     }
 
 
@@ -105,9 +107,12 @@ class KeyStatusController extends Controller
      */
     public function destroy(KeyStatus $KeyStatus)
     {
-        // return "destroooy";
-        $KeyStatus->delete();
-
-        return redirect()->route('AdminArea');
+         // return "destroooy";
+      $KeyStatus->delete();
+      return response()->json([
+               'status' => 'success',
+               'message' => 'Software record updated successfully',
+               'data' => $KeyStatus,
+           ]);
     }
 }

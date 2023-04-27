@@ -10,7 +10,7 @@ import { storeToRefs } from 'pinia';
 const useGeneral=useGeneralStore()
 const { isPostOverlay,isCropperModal,isImageDisplay}=storeToRefs(useGeneral)
 
-const user=usePage().props.auth.user
+// const user=usePage().props.auth.user
 
 
 const props=defineProps(['canLogin','canRegister']);

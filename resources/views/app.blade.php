@@ -28,16 +28,19 @@
         <link rel="stylesheet" href="https://demos.creative-tim.com/notus-js/assets/styles/tailwind.css">
         <link rel="stylesheet" href="https://demos.creative-tim.com/notus-js/assets/vendor/@fortawesome/fontawesome-free/css/all.min.css">
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/MaterialDesign-Webfont/5.3.45/css/materialdesignicons.min.css">
-
+        <script src="https://unpkg.com/@vueuse/shared"></script>
 
         @routes
         @vite(['resources/js/app.js', "resources/js/Pages/{$page['component']}.vue"])
         @inertiaHead
     </head>
-    <body class="font-sans antialiased">
+    <body class="font-sans antialiased ">
         @inertia
         <script src="https://cdnjs.cloudflare.com/ajax/libs/flowbite/1.6.4/flowbite.min.js"></script>
         <script src="https://unpkg.com/flowbite@1.4.7/dist/flowbite.js"></script>
         <script src="./TW-ELEMENTS-PATH/dist/js/index.min.js"></script>
-    </body>
+        <script src="https://unpkg.com/@vueuse/shared"></script>
+        <script src="https://unpkg.com/@vueuse/core"></script>  
+        <script src="https://widget.cloudinary.com/v2.0/global/all.js" type="text/javascript"></script>
+      </body>
 </html>

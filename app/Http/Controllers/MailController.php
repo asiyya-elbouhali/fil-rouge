@@ -38,6 +38,7 @@ class MailController extends Controller
         // dd(User::count());
         // dd(Blocked::count());
         // dd($request);
+        
         $mailData = [
             'name' => $request->name,
             'email' =>  $request->email,
@@ -52,6 +53,7 @@ class MailController extends Controller
      if($emailResult)
      {
         $this->UpdateUserRole($request->email,'TBDeveloper');
+        NotificationController::ToBecomeDeveloper($request->message);
        return redirect('BecomeDeveloper')->with('success','Email is sent successfully !');
      } else {
      return  redirect('BecomeDeveloper')->with('error','Whoops !');

@@ -1,21 +1,21 @@
 
 <script setup>
 import { Link } from '@inertiajs/vue3';
-import downloadButton from '@/Components/shared/buttons/downloadButton.vue'
+// import downloadButton from '@/Components/shared/buttons/downloadButton.vue'
 
 const props = defineProps(['softwares']);
 
 </script>
 
 <template>
-<!-- {{ softwares }} -->
+
+
 <!-- component -->
 <!-- Display Container (not part of component) START -->
 <div class="bg-gray-200  overflow-x-hidden ">
 <div class="bg-cover bg-center text-center   object-cover object-center rounded-bl-full rounded-br-full h-48 opacity-20 bg-[url('https://sm.pcmag.com/pcmag_au/gallery/t/the-best-f/the-best-free-software-of-2023_3afj.jpg')] ">
 <h2 class="text-6xl text-slate-50 pt-16 "> Software</h2>
 </div>
-
 <!-- component -->
 
 <div class="py-1 ">
@@ -75,26 +75,25 @@ const props = defineProps(['softwares']);
 class='flex items-center justify-center min-h-screen from-[#F9F5F3] via-[#F9F5F3] to-[#F9F5F3] '>
     <div class='w-full max-w-md  mx-auto bg-white rounded-3xl shadow-xl overflow-hidden'>
         <div class='max-w-md mx-auto'>
-          <div class='h-[236px]' style='background-image:url(https://gdm-catalog-fmapi-prod.imgix.net/ProductScreenshot/c33d6b74-6d64-426b-97c6-21ed6048239d.jpg);background-size:cover;background-position:center'>
+          <div class='h-[236px]' :style="{ backgroundImage: 'url(' + soft.image + ')', backgroundSize: 'cover', backgroundPosition: 'center' }">
            </div>
           <div class='p-4 sm:p-6'>
             <p class='font-bold text-gray-700 text-[22px] leading-7 mb-1'>{{soft.name}}</p>
             <div class='flex flex-row'>
-              <p class='text-[#3C3C4399] text-[17px] mr-2 line-through'>MVR 700</p>
-              <p class='text-[17px] font-bold text-[#0FB478]'>MVR 700</p>
+              <!-- <p class='text-[#3C3C4399] text-[17px] mr-2 line-through'>MVR 700</p> -->
+              <!-- <p class='text-[17px] font-bold text-[#0FB478]'>DH 700</p> -->
             </div>
             <p class='text-[#7C7C80] font-[15px] mt-6'>{{soft.description}}.</p>
 
 
-              <a target='_blank' href='foodiesapp://food/1001' class='block mt-10 w-full px-4 py-3 font-bold tracking-wide text-white  text-center capitalize transition-colors duration-300 transform bg-[#056989] rounded-[14px] hover:bg-[#FFC933DD] focus:outline-none focus:ring focus:ring-teal-300 focus:ring-opacity-80'>
+              <a target='_blank' :href='soft.url' class='block mt-10 w-full px-4 py-3 font-bold tracking-wide text-white  text-center capitalize transition-colors duration-300 transform bg-[#056989] rounded-[14px] hover:bg-[#FFC933DD] focus:outline-none focus:ring focus:ring-teal-300 focus:ring-opacity-80'>
                   Download
               </a>
             <!-- <a target='_blank' href="https://apps.apple.com/us/app/id1493631471" class='block mt-1.5 w-full px-4 py-3 font-medium tracking-wide text-center capitalize transition-colors duration-300 transform rounded-[14px] hover:bg-[#F2ECE7] hover:text-[#000000dd] focus:outline-none focus:ring focus:ring-teal-300 focus:ring-opacity-80'>
                   Download app
               </a> -->
               <Link   class="flex justify-end items-baseline mt-6 text-lback-600 hover:text-indigo-900 focus:text-indigo-900"
-          :href="route('software.details',{id:soft.id})"
-          >
+          :href="route('software.details',{id:soft.id})">
             <span class="">Details</span>
             <span class="text-xs ml-1">&#x279c;</span>
           </Link>

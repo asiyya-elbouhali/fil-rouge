@@ -11,13 +11,16 @@ export default {
 <script setup>
 import { Head } from "@inertiajs/vue3";
 import SoftwareCard from "@/Components/sb_softwares/SoftwareCard.vue";
-import MainNavLayout from "@/Components/headers/MainNavLayout.vue";
-import theFooter from "@/Components/footer/theFooter.vue";
+ 
+
+defineProps({ softwares: Array })
+
 </script>
 <template>
   <!-- <h1> {{ $page.props.auth }}</h1> -->
   <Head title="Softwares" />
-  <SoftwareCard :softwares="$page.props.softwares" >
+
+   <SoftwareCard :softwares="$page.props.softwares.data" >
 
 </SoftwareCard>
 

@@ -1,4 +1,11 @@
 <script setup>
+import { defineProps } from 'vue';
+const props = defineProps({
+  price: {
+    type: Number,
+    required: true
+  }
+});
 </script>
 
 <template>
@@ -20,7 +27,7 @@
                                          
                             </div>
                             <div>
-                                <span class="font-semibold text-gray-600 text-xl">$210</span><span class="font-semibold text-gray-600 text-sm">.00</span>
+                                <span class="font-semibold text-gray-600 text-xl">{{ price }},00 DH</span><span class="font-semibold text-gray-600 text-sm">.00</span>
                             </div>
                         </div>
                     </div>
@@ -61,7 +68,7 @@
                                 <span class="text-gray-600">Total</span>
                             </div>
                             <div class="pl-3">
-                                <span class="font-semibold text-gray-400 text-sm">AUD</span> <span class="font-semibold">$210.00</span>
+                                <span class="font-semibold text-gray-400 text-sm">AUD</span> <span class="font-semibold">{{ price }},00 DH</span>
                             </div>
                         </div>
                     </div>
@@ -157,27 +164,37 @@
                         </div>
                     </div>
                     <div>
-                        <button class="block w-full max-w-xs mx-auto bg-indigo-500 hover:bg-indigo-700 focus:bg-indigo-700 text-white rounded-lg px-3 py-2 font-semibold"><i class="mdi mdi-lock-outline mr-1"></i> PAY NOW</button>
+                    <!-- <button class="block w-full max-w-xs mx-auto bg-indigo-500 hover:bg-indigo-700 focus:bg-indigo-700 text-white rounded-lg px-3 py-2 font-semibold"><i class="mdi mdi-lock-outline mr-1"></i> PAY NOW</button> -->
+
+                        <form action="https://www.paypal.com/cgi-bin/webscr" 
+                        method="post">
+                             <!-- Identify your business so that you can collect the payments. --> 
+                             <input type="hidden" name="business" 
+                             value="sendsoftbusiness@gmail.com"> 
+                             <!-- Specify a Buy Now button. --> 
+                             <input type="hidden" name="cmd" value="_xclick">
+                              <!-- Specify details about the item that buyers will purchase. -->
+                               <input type="hidden" name="item_name" value="Hot Sauce-12oz. Bottle"> 
+                               <input type="hidden" name="amount" :value="price"> 
+                               <input type="hidden" name="currency_code" value="USD"> 
+                               <!-- Display the payment button. --> 
+                               <input type="image" name="submit" border="0" 
+                               src="https://www.paypalobjects.com/en_US/i/btn/btn_buynow_LG.gif" 
+                               
+                               alt="Buy Now"> <img alt="" border="0" width="1" height="1" 
+                               src="https://www.paypalobjects.com/en_US/i/scr/pixel.gif" >
+                             </form>
+
+
                     </div>
                 </div>
             </div>
         </div>
     </div>
-    <div class="p-5">
-        <div class="text-center text-gray-400 text-sm">
-            <a href="https://www.buymeacoffee.com/scottwindon" target="_blank" class="focus:outline-none underline text-gray-400"><i class="mdi mdi-beer-outline"></i>Buy me a beer</a> and help support open-resource
-        </div>
-    </div>
+   
 </div>
 
-<!-- BUY ME A BEER AND HELP SUPPORT OPEN-SOURCE RESOURCES -->
-<div class="flex items-end justify-end fixed bottom-0 right-0 mb-4 mr-4 z-10">
-    <div>
-        <a title="Buy me a beer" href="https://www.buymeacoffee.com/scottwindon" target="_blank" class="block w-16 h-16 rounded-full transition-all shadow hover:shadow-lg transform hover:scale-110 hover:rotate-12">
-            <img class="object-cover object-center w-full h-full rounded-full" src="https://i.pinimg.com/originals/60/fd/e8/60fde811b6be57094e0abc69d9c2622a.jpg"/>
-        </a>
-    </div>
-</div>
+ 
 </template>
 
 <style>

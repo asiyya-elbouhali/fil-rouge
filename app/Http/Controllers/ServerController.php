@@ -12,7 +12,10 @@ class ServerController extends Controller
      */
     public function index()
     {
-        //
+         $users = Server::paginate(3);
+
+        return $users;
+
     }
 
 
@@ -46,9 +49,9 @@ class ServerController extends Controller
             'password' => 'required',
 
         ]);
-    
+
         $server = Server::create($validatedData);
-    
+
         return response()->json([
             'status' => 'success',
             'message' => 'Server record created successfully',
@@ -78,7 +81,7 @@ class ServerController extends Controller
     public function update(Request $request, string $id)
     {
         // return $id;
-    
+
         $validatedData = $request->validate([
             'name' => 'required',
             'adresse' => 'required',
@@ -87,18 +90,18 @@ class ServerController extends Controller
             'password' => 'required',
             'login' => 'required',
          ]);
-    
+
         $server = Server::find($id);
-    
+
         if (!$server) {
             return response()->json([
                 'status' => 'error',
                 'message' => 'Software not found',
             ], 404);
         }
-    
+
         $server->update($validatedData);
-    
+
         return response()->json([
             'status' => 'success',
             'message' => 'Software record updated successfully',
@@ -113,7 +116,11 @@ class ServerController extends Controller
     {
         // return "destroooy";
         $server->delete();
-
+   return response()->json([
+            'status' => 'success',
+            'message' => 'Software record updated successfully',
+            'data' => $server,
+        ]);
         return redirect()->route('AdminArea');
     }
 }

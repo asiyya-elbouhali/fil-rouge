@@ -12,7 +12,9 @@ class GatewayController extends Controller
      */
     public function index()
     {
-        //
+        $gateways = Gateway::paginate(3);
+
+        return $gateways;
     }
 
     public function AllGateways()
@@ -101,8 +103,13 @@ class GatewayController extends Controller
      */
     public function destroy(Gateway $gateway)
     {
+        // return "destroooy";
         $gateway->delete();
-        return redirect()->route('AdminArea');
+   return response()->json([
+            'status' => 'success',
+            'message' => 'Software record updated successfully',
+            'data' => $gateway,
+        ]);
     }
     
     

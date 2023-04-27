@@ -22,6 +22,12 @@ return new class extends Migration
             $table->string('description');
             $table->string('url')->nullable();
             $table->string('icon')->nullable();
+            $table->unsignedBigInteger('user_id');
+            $table->foreign('user_id')
+            ->references('id')
+            ->on('users')
+            ->onDelete('cascade');
+
             $table->timestamps();
         });
     }

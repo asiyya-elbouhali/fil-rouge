@@ -22,11 +22,11 @@ class SoftwareFactory extends Factory
             'add_date' => fake()->date(),
             'compatibility' => fake()->word(),
             'developer' => fake()->name(),
-            'image' => fake()->image(),
+            'image' => fake()->imageUrl(),
             'description' => fake()->text(),
             'url' => fake()->url(),
-            'icon' => fake()->image(),
-
+            'icon' => fake()->imageUrl(),
+            'user_id' => fake()->numberBetween(1,10),
         ];
     }
 }

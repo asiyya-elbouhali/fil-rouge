@@ -12,7 +12,9 @@ class OrderStatusController extends Controller
      */
     public function index()
     {
-        //
+        $orderStatuses = OrderStatus::paginate(5);
+
+        return $orderStatuses;
     }
 
 
@@ -104,9 +106,12 @@ class OrderStatusController extends Controller
      */
     public function destroy(OrderStatus $OrderStatus)
     {
-         // return "destroooy";
-         $OrderStatus->delete();
-
-         return redirect()->route('AdminArea');
+            // return "destroooy";
+      $OrderStatus->delete();
+      return response()->json([
+               'status' => 'success',
+               'message' => 'Software record updated successfully',
+               'data' => $OrderStatus,
+           ]);
     }
 }

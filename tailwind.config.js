@@ -10,6 +10,7 @@ module.exports = {
         "./*.html",
         "./ecommerce/*.html",
         "./assets/**/*.js",
+        
     ],
 
     theme: {

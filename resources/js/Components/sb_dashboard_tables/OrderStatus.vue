@@ -2,103 +2,159 @@
 // to add software
 import { ref, onMounted,reactive } from 'vue';
 import axios from 'axios';
-const props = defineProps(['OrderStatuses']);
-const csrfToken = ref('');
-const formData = ref({
-  name: '',
-  value: '',
- 
-});
-const formDataEdit = ref({
-  name: '',
-  value: '',
- 
-});
-
+import { useOrderStatusStore } from "@/stores/orderStatusStore";
+import { storeToRefs } from "pinia";
+import Swal from 'sweetalert2';
+const isEditMode = ref(false);
 const showModal = ref(false);
+const store = useOrderStatusStore(); // create a store instance
+const { orderStatuses } = storeToRefs(store);
+const { fetchorderStatuses } = store; //
 
+onMounted(() => {
+  fetchorderStatuses();  // this function store all data in local server variable
+});
 
+function deleteOrderStatus(orderStatus) {
+  Swal.fire({
+    title: 'Are you sure?',
+    text: 'You will not be able to recover this server!',
+    icon: 'warning',
+    showCancelButton: true,
+    confirmButtonColor: '#d33',
+    cancelButtonColor: '#3085d6',
+    confirmButtonText: 'Yes, delete it!',
+
+  }).then((result) => {
+    if (result.isConfirmed) {
+      store.deleteOrderStatus(orderStatus);
+      //   Swal.fire(
+      //     'Deleted!',
+      //     'Your server has been deleted.',
+      //     'success'
+      //   )
+    }
+  })
+};
+
+const orderStatusId = ref('');
+const orderStatusData = reactive({
+  name: '',
+  value: '',
+});
+
+function resetOrderStatusData() {
+  orderStatusData.name = '';
+  orderStatusData.value = '';
+};
+
+//
+const csrfToken = ref('');
 const fetchCsrfToken = async () => {
   try {
     const response = await axios.get('/csrf-token');
     csrfToken.value = response.data.csrfToken;
-    // console.log(csrfToken.value)
   } catch (error) {
-    // console.error(error);
-  }
-};
-
-const submitForm = async () => {
-  try {
-    const data = new FormData();
-    data.append('name', formData.value.name);
-    data.append('value', formData.value.value);
-
-    const response = await axios.post('/addOrderStatus',data, {
-      headers: {
-        // 'Content-Type': 'multipart/form-data',
-        'X-CSRF-TOKEN': csrfToken.value,
-      },
-    });
-    // Handle successful response
-    console.log("ok")
-    console.log(response.data)
-     const  button = document.getElementById('closeModel');
-            button.click();
-
-  } catch (error) {
-    // Handle error response
-  console.log("error")
- console.error(error.response.data);
   }
 };
 onMounted(fetchCsrfToken);
+// btn cancel
+function handleCancel() {
+  resetOrderStatusData();
+  showModal.value = false;
+  orderStatusId.value = 0;
+};
+//
+async function submitForm() {
+  if (isEditMode.value) {
+    // Handle update request here
+    await store.updateOrderStatus(orderStatusId.value, orderStatusData).then(() => {
+      // show success message using SweetAlert2 if update was successful
+      Swal.fire(
+        {
+          title: 'Updated !',
+          text: 'Your server has been updated',
+          icon: 'success',
+          showCancelButton: false,
+          timer: 500
+        }
+      );
+    })
+      .catch(error => {
+        // show error message using SweetAlert2 if update failed
+        Swal.fire(
+          'Error!',
+          'Failed to update server: ' + error,
+          'error'
+        );
+      });
+  } else {
 
+    // Handle create request here
+    await store.createOrderStatus(orderStatusData).then(() => {
+      // show success message using SweetAlert2 if update was successful
 
-const deleteOrderStatus = async (id) => {
-  try {
-    const response = await axios.delete(`/OrderStatus/${id}`);
+      Swal.fire(
+        {
+          title: 'Ceated !',
+          text: 'Your server has been Created',
+          icon: 'success',
+          showCancelButton: false,
+          timer: 500
+        }
 
-    console.log(response.data)
-
-  } catch (error) {
-    console.error(error);
+      );
+    })
+      .catch(error => {
+        // show error message using SweetAlert2 if update failed
+        Swal.fire(
+          'Error!',
+          'Failed to update server: ' + error,
+          'error'
+        );
+      });
   }
+  // Close the modal after the request is complete
+  // showModal.value = false;
 };
 
+function openCreateModal() {
+  isEditMode.value = false;
 
-// UPDATE FUNCTION
-function editOrderStatus(data) {
+  orderStatusData.name = '';
+  orderStatusData.value = '';
   showModal.value = true;
-  formDataEdit.value = { ...data };
+};
+
+function openEditModal(id, orderStatus) {
+  orderStatusId.value = id;
+  isEditMode.value = true;
+   orderStatusData.name = orderStatus.name;
+  orderStatusData.value = orderStatus.value;
+
+  showModal.value = true;
 }
 
 
-const saveChanges = async () => {
-  try {
-    const id = formDataEdit.value.id;
-    const response = await axios.put(`/OrderStatus/${id}`,formDataEdit.value);
-    console.log(response.data)
-  } catch (error) {
-    // Handle error response
-  console.log("error RRR")
- console.error(error);
-  }
-    showModal.value = false;
-};
+
+
+
+
+
+
+ 
 </script>
 
 <template>
-    <!-- <h1>{{ BusinessCategories }}</h1> -->
 
-    <!-- start edit Order Status -->
     <!-- updating modal -->
     <div class=" rounded-lg">
-    <button @click="showModal = true">Edit</button>
-     <div v-if="showModal" class="modal-test  fixed mx-20 my-3 overflow-y-auto py-18 inset-2 z-50 flex items-center justify-center">
+    <!-- <button @click="showModal = true">Edit</button> -->
+     <div v-if="showModal" 
+     class="modal-test  fixed mx-20 my-3 overflow-y-auto py-18 inset-2 z-50 flex items-center justify-center">
       <div class="modal-content bg-white  p-8 rounded-lg shadow-lg">
-        <h2 class="pt-20">Edit Order Status</h2>
-        <form>
+        <h2 class="pt-20">{{ isEditMode ? 'Edit' : 'Create' }} Order Status</h2>
+        <form @submit.prevent="submitForm">
           <div class="mt-10 grid grid-cols-1 gap-x-6 gap-y-2 sm:grid-cols-6">
 
           <div class="sm:col-span-3">
@@ -107,7 +163,7 @@ const saveChanges = async () => {
             <div class="flex rounded-md shadow-sm ring-1 ring-inset ring-gray-300 focus-within:ring-2 focus-within:ring-inset focus-within:ring-indigo-600 sm:max-w-md">
 
               <input type="text" name="name" id="name" autocomplete="name"
-              v-model="formDataEdit.name"
+              v-model="orderStatusData.name"
               class="block flex-1 border-0 bg-transparent py-1.5 pl-1 text-gray-900 placeholder:text-gray-400 focus:ring-0 sm:text-sm sm:leading-6" placeholder=""/>
             </div>
           </div>
@@ -120,7 +176,7 @@ const saveChanges = async () => {
             <div class="flex rounded-md shadow-sm ring-1 ring-inset ring-gray-300 focus-within:ring-2 focus-within:ring-inset focus-within:ring-indigo-600 sm:max-w-md">
 
               <input type="number"
-               v-model="formDataEdit.value"
+               v-model="orderStatusData.value"
               name="version" id="version" autocomplete="version" class="block flex-1 border-0 bg-transparent py-1.5 pl-1 text-gray-900 placeholder:text-gray-400 focus:ring-0 sm:text-sm sm:leading-6" placeholder=""/>
             </div>
           </div>
@@ -132,15 +188,17 @@ const saveChanges = async () => {
  
  
         <div class="mt-6 flex items-center justify-end gap-x-6 mr-40 ">
-          <button @click.prevent="showModal = false" 
+          <button 
+          @click.prevent="handleCancel()" 
                 class="text-sm font-semibold leading-6     text-gray-900"
-                data-modal-hide="authentication-modal">
+                 >
               <span class="sr-only">Close modal</span>  Cancel
         </button>
 
-          <button @click.prevent="saveChanges()"
-                class="rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-                >Save
+          <button 
+          type="submit"                
+          class="rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+                > {{isEditMode ? 'Save Changes' : 'Create Server' }}
               </button>
 
         </div>
@@ -163,8 +221,7 @@ const saveChanges = async () => {
                 <div class="bg-white shadow-md rounded my-6">
                     <div class=" float-right">
                     <button
-                    data-modal-target="OrderStatusModal"
-                    data-modal-toggle="OrderStatusModal"
+                    @click="openCreateModal()" 
                     type="button"
                     class="text-white bg-gradient-to-r from-blue-500
                      via-blue-600 to-blue-700 hover:bg-gradient-to-br
@@ -187,7 +244,6 @@ const saveChanges = async () => {
 
 
 
-
                     <table class="min-w-max w-full table-auto">
                         <thead>
                             <tr class="bg-gray-200 text-gray-600 uppercase text-sm leading-normal">
@@ -200,7 +256,7 @@ const saveChanges = async () => {
 
                         <tbody class="text-gray-600 text-sm font-light">
                             <tr
-                            v-for="OrderStatus in OrderStatuses" :Key="OrderStatus.id"
+                            v-for="OrderStatus in orderStatuses.data" :Key="OrderStatus.id"
 
                             class="border-b border-gray-200 hover:bg-gray-100">
                                 <td class="py-3 px-6 text-left whitespace-nowrap">
@@ -249,7 +305,7 @@ const saveChanges = async () => {
                                             </svg>
                                         </div>
                                         <button
-                                        @click="editOrderStatus(OrderStatus)"
+                                        @click="openEditModal(OrderStatus.id,OrderStatus)"
 
                                         data-modal-target="editOrderStatusModal"
                                         data-modal-toggle="editOrderStatusModal"
@@ -261,7 +317,7 @@ const saveChanges = async () => {
                                             </svg>
                                         </button>
                                         <button
-                                        @click="deleteOrderStatus(OrderStatus.id)"
+                                        @click="deleteOrderStatus(OrderStatus)"
 
                                         class="w-4 mr-2 transform hover:text-purple-500 hover:scale-110">
                                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
@@ -272,110 +328,7 @@ const saveChanges = async () => {
                                         </button>
                                     </div>
                                 </td>
-
-                                <!-- edit software  -->
-                                <div id="editOrderStatusModal" tabindex="-1" aria-hidden="true"
-                                class="fixed top-0 left-0 right-0  z-50 hidden w-screen p-4 overflow-x-hidden overflow-y-auto md:inset-0 h-[calc(100%-1rem)] max-h-full">
-                                    <div class="relative w-screen px-20 max-h-full">
-                                        <!-- Modal content -->
-                                        <div class="relative bg-white rounded-lg shadow dark:bg-gray-700">
-
-                                            <button type="button"
-                                            id="closeModel"
-                                            class="absolute top-3 right-2.5 text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm p-1.5 ml-auto inline-flex items-center dark:hover:bg-gray-800 dark:hover:text-white"
-                                            data-modal-hide="editOrderStatusModal">
-                                                <svg aria-hidden="true" class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"></path></svg>
-                                                <span class="sr-only">Close modal</span>
-                                            </button>
-
-                                            <div class="px-6 py-6 lg:px-8">
-                                                <h3 class="mb-4 text-xl font-medium text-gray-900 dark:text-white justify-center flex">Edit Software</h3>
-
-
-
-                                                <form  class="w-[100%] ">
-                                <input type="hidden" name="_token" :value="csrfToken">
-
-                                                    <div class="space-y-12 mx-40 my-10">
-                                    <div class=" border-gray-900/10 pb-12">
-                                      <!-- <h2 class="text-base font-semibold leading-7 text-gray-900">Add Softawre</h2> -->
-                                      <p class="mt-1 text-sm leading-6 text-gray-600">This information will be displayed publicly so be careful what you share.</p>
-
-
-
-
-
-                                      <div class="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
-                                        <div class="sm:col-span-3">
-                                            <label for="username" class="block text-sm font-medium leading-6 text-gray-900">Name</label>
-                                          <div class="mt-2">
-                                            <div class="flex rounded-md shadow-sm ring-1 ring-inset ring-gray-300 focus-within:ring-2 focus-within:ring-inset focus-within:ring-indigo-600 sm:max-w-md">
-
-                                              <input
-                                              value=""
-                                              type="text" name="name" id="name" autocomplete="name"
-                                              class="block flex-1 border-0 bg-transparent py-1.5 pl-1 text-gray-900 placeholder:text-gray-400 focus:ring-0 sm:text-sm sm:leading-6" placeholder=""/>
-                                            </div>
-                                          </div>
-                                        </div>
-
-                                  
-
-                                      </div>
-
-
-
-
-                                      <div class="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
-                                        <div class="col-span-full">
-                                          <label for="description" class="block text-sm font-medium leading-6 text-gray-900">Description</label>
-                                          <div class="mt-2">
-                                            <textarea
-                                            value=""
-                                            id="description"
-                                            name="description" rows="3" class="block w-full rounded-md border-0 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:py-1.5 sm:text-sm sm:leading-6"/>
-                                          </div>
-                                          <p class="mt-3 text-sm leading-6 text-gray-600">Write a few sentences about yourself.</p>
-                                        </div>
-                                   
-                                      </div>
-                                    </div>
-
-
-
-                                    <div class="border-b border-gray-900/10 pb-12">
-
-
-
-                                      <div class="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
-                                        <div class="sm:col-span-3">
-                                          <label for="trial" class="block text-sm font-medium leading-6 text-gray-900"> Number of devices </label>
-                                          <div class="mt-2">
-                                            <input type="number" name="freeTrail" id="freeTrail" autocomplete="freeTrail" class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6" />
-                                          </div>
-                                        </div>
-
-
-
-
-                                      </div>
-                                    </div>
-                                  </div>
-
-                                  <div class="mt-6 flex items-center justify-end gap-x-6 mr-40 ">
-                                    <button type="button" class="text-sm font-semibold leading-6 text-gray-900"
-                                    data-modal-hide="editOrderStatusModal">
-                                    <span class="sr-only">Close modal</span>
-                                Cancel</button>
-                                    <button type="submit"
-                                    class="rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-                                    >Save</button>
-                                  </div>
-                                </form>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
+ 
                             </tr>
                     </tbody>
                 </table>
@@ -386,100 +339,7 @@ const saveChanges = async () => {
 
 
 
-<div id="popup-modal" tabindex="-1" >
-</div>
 
-
-<div id="OrderStatusModal" tabindex="-1" aria-hidden="true"
-class="fixed top-0 left-0 right-0  z-50 hidden w-screen p-4 overflow-x-hidden overflow-y-auto md:inset-0 h-[calc(100%-1rem)] max-h-full">
-    <div class="relative w-screen px-20 max-h-full">
-        <!-- Modal content -->
-        <div class="relative bg-white rounded-lg shadow dark:bg-gray-700">
-
-            <button type="button"
-            id="closeModel"
-            class="absolute top-3 right-2.5 text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm p-1.5 ml-auto inline-flex items-center dark:hover:bg-gray-800 dark:hover:text-white"
-            data-modal-hide="OrderStatusModal">
-                <svg aria-hidden="true" class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"></path></svg>
-                <span class="sr-only">Close modal</span>
-            </button>
-
-            <div class="px-6 py-6 lg:px-8">
-                <h3 class="mb-4 text-xl font-medium text-gray-900 dark:text-white justify-center flex">Add New Order Status</h3>
-
-
-
-
-                <form @submit.prevent="submitForm"
-                
-                 class="w-[100%] ">
-                 <input type="hidden" name="_token" :value="csrfToken">
-
-
-                    <div class="space-y-12 mx-40 my-10">
-    <div class=" border-gray-900/10 pb-12">
-      <!-- <h2 class="text-base font-semibold leading-7 text-gray-900">Add Softawre</h2> -->
-      <p class="mt-1 text-sm leading-6 text-gray-600">This information will be displayed publicly so be careful what you share.</p>
-
-
-
-
-
-      <div class="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
-        <div class="sm:col-span-3">
-            <label for="username" class="block text-sm font-medium leading-6 text-gray-900">Name</label>
-          <div class="mt-2">
-            <div class="flex rounded-md shadow-sm ring-1 ring-inset ring-gray-300 focus-within:ring-2 focus-within:ring-inset focus-within:ring-indigo-600 sm:max-w-md">
-
-              <input 
-              v-model="formData.name"
-
-              type="text" name="name" id="name" autocomplete="name"
-              class="block flex-1 border-0 bg-transparent py-1.5 pl-1 text-gray-900 placeholder:text-gray-400 focus:ring-0 sm:text-sm sm:leading-6" placeholder=""/>
-            </div>
-          </div>
-        </div>
-
-      </div>
-
-
-    </div>
-
-
-
-    <div class="border-b border-gray-900/10 pb-12">
-
-
-
-      <div class="mt-6 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
-        <div class="sm:col-span-3">
-          <label for="trial" class="block text-sm font-medium leading-6 text-gray-900"> value </label>
-          <div class="mt-2">
-            <input 
-            v-model="formData.value"
-
-            type="number" name="freeTrail" id="freeTrail" autocomplete="freeTrail" class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6" />
-          </div>
-        </div>
-
-      </div>
-    </div>
-  </div>
-
-  <div class="mt-6 flex items-center justify-end gap-x-6 mr-40 ">
-    <button type="button" class="text-sm font-semibold leading-6 text-gray-900"
-    data-modal-hide="OrderStatusModal">
-    <span class="sr-only">Close modal</span>
-Cancel</button>
-    <button type="submit"
-    class="rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-    >Save</button>
-  </div>
-</form>
-            </div>
-        </div>
-    </div>
-</div>
 
 
 

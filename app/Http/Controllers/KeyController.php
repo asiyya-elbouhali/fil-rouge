@@ -12,9 +12,20 @@ class KeyController extends Controller
      */
     public function index()
     {
-        //
+        $keys = Key::with('order','key_status')->paginate(3);
+
+        return $keys;
     }
 
+    public function ActivateKey(string $id ){
+
+        $Key = Key::find($id);
+         $Key->update(['activated_key'=>md5($Key->initial_key)]);
+
+         return redirect()->back();
+
+
+    }
 
     public function AllKeys()
     {
@@ -82,7 +93,6 @@ class KeyController extends Controller
 
     $validatedData = $request->validate([
         'initial_key' => 'required',
-        'activated_key' => 'required',
         'device_number' => 'required',
         'expiration_date' => 'required',
         'auto_renewal' => 'required',
@@ -113,10 +123,13 @@ class KeyController extends Controller
      */
     public function destroy(Key $Key)
     {
-         // return "destroooy";
-         $Key->delete();
-
-         return redirect()->route('AdminArea');
+      // return "destroooy";
+      $Key->delete();
+      return response()->json([
+               'status' => 'success',
+               'message' => 'Software record updated successfully',
+               'data' => $Key,
+           ]);
     }
 
     

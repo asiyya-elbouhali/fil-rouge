@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Order extends Model
 {
-    use HasFactory;
+      use HasFactory;
     protected $fillable = [
       'order_date',
       'automatically_renew',
@@ -32,7 +32,7 @@ class Order extends Model
 
     public function key (){
 
-        return $this->hasMany(Key::class);
+        return $this->hasMany(Key::class,'order_id','id');
     }
 
     public function invoice(){
@@ -53,8 +53,7 @@ class Order extends Model
       }
 
       public function businessCategory(){
-        return  $this->belongsTo(BusinessCategory::class);
-      }
+        return  $this->belongsTo(BusinessCategory::class, 'business_categories_id');      }
 
 
 

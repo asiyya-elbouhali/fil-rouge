@@ -1,5 +1,5 @@
 <script>
-import Layout from '@/Pages/Layout.vue'
+import Layout from '@/Pages/AdminLayout.vue'
 
 export default {
   // Using a render function...
@@ -11,28 +11,35 @@ export default {
 </script>
 
 <script setup>
+import { ref } from 'vue';
 import { Head, Link,usePage } from '@inertiajs/vue3';
-import MainNavLayout from '@/Components/headers/MainNavLayout.vue';
-import theFooter from '@/Components/footer/theFooter.vue';
-import ClientNavBar from '@/Components/headers/ClientSpaceNavBar.vue'
 
 
-import userSoftware from '@/Components/sb_users/userSoftware.vue';
-
+import MyOrders from '@/Components/sb_users/userSoftware.vue';
+import myInvoices from '@/Components/sb_users/MyInvoices.vue';
+import SoftwareTable from '@/Components/sb_developer/SoftwareTable.vue'
 import { useGeneralStore } from '@/stores/general';
-import { storeToRefs } from 'pinia';
-
+ 
 const useGeneral=useGeneralStore()
-const { isPostOverlay,isCropperModal,isImageDisplay}=storeToRefs(useGeneral)
 
-const user=usePage().props.auth.user
-
-
+// const user=usePage().props.auth.user
 const props=defineProps(['canLogin','canRegister']);
+
+const MyOrdersComponent=ref(true);
+const MyInvoicesComponent=ref(false);
+const softwareComponent=ref(false);
+
+function hideAllComponents(){
+  MyOrdersComponent.value=false,
+  MyInvoicesComponent.value=false,
+  softwareComponent.value=false
+}
+
 </script>
 
 <template>
-<!-- {{ $page.props.orders }} -->
+  
+<!-- {{ $page.props.mySoftware }} -->
 <div
       class="flex h-screen bg-gray-50 dark:bg-gray-900"
       :class="{ 'overflow-hidden': isSideMenuOpen }"
@@ -58,27 +65,27 @@ const props=defineProps(['canLogin','canRegister']);
                 class="inline-flex items-center w-full text-sm font-semibold text-gray-800 transition-colors duration-150 hover:text-gray-800 dark:hover:text-gray-200 dark:text-gray-100"
                 href="#"
               >
-                <svg
-                  class="w-5 h-5"
-                  aria-hidden="true"
-                  fill="none"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
+              <svg class="w-5 h-5"
+                  xmlns="http://www.w3.org/2000/svg"
                   viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
-                  <path
-                    d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"
-                  ></path>
-                </svg>
-                <span class="ml-4"> Client</span>
+                  fill="green"
+                  stroke="green"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round">
+                <path d="M12 2c-4.97 0-9 4.03-9 9s4.03 9 9 9 9-4.03 9-9-4.03-9-9-9zm0 12a3 3 0 100-6 3 3 0 000 6z"/>
+              </svg>
+
+
+                <span class="ml-4"> {{ usePage().props.auth.user.name }}
+</span>
               </a>
             </li>
           </ul>
           <ul>
             <li class="relative px-6 py-3">
               <a
+              @click="hideAllComponents(); MyOrdersComponent=true"
                 class="inline-flex items-center w-full text-sm font-semibold transition-colors duration-150 hover:text-gray-800 dark:hover:text-gray-200"
                 href="#"
               >
@@ -96,11 +103,12 @@ const props=defineProps(['canLogin','canRegister']);
                     d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"
                   ></path>
                 </svg>
-                <span class="ml-4">My Software</span>
+                <span class="ml-4">My Orders</span>
               </a>
             </li>
             <li class="relative px-6 py-3">
               <a
+               @click="hideAllComponents(); MyInvoicesComponent=true"
                 class="inline-flex items-center w-full text-sm font-semibold transition-colors duration-150 hover:text-gray-800 dark:hover:text-gray-200"
                 href="#"
               >
@@ -119,6 +127,31 @@ const props=defineProps(['canLogin','canRegister']);
                   ></path>
                 </svg>
                 <span class="ml-4">My invoices</span>
+              </a>
+            </li>
+            <li
+            v-if=" usePage().props.auth.user.type=='developer'||usePage().props.auth.user.type=='admin' "
+             class="relative px-6 py-3">
+              <a
+               @click="hideAllComponents(); softwareComponent=true"
+                class="inline-flex items-center w-full text-sm font-semibold transition-colors duration-150 hover:text-gray-800 dark:hover:text-gray-200"
+                href="#"
+              >
+                <svg
+                  class="w-5 h-5"
+                  aria-hidden="true"
+                  fill="none"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"
+                  ></path>
+                </svg>
+                <span class="ml-4">My Software</span>
               </a>
             </li>
             <li class="relative px-6 py-3">
@@ -529,17 +562,25 @@ const props=defineProps(['canLogin','canRegister']);
        
         <main class="h-full overflow-y-auto z-20">
                     <div class="container px-6 mx-auto grid">
-                    
+                      <MyOrders 
+                      v-if="MyOrdersComponent"
+                       :myOrders="$page.props.myOrders" />
+                       <myInvoices 
+                      v-if="MyInvoicesComponent"
+                       :myInvoices="$page.props.myInvoices" />
+                       <SoftwareTable
+                       v-if="softwareComponent"
+                       :mySoftware="$page.props.mySoftware"
+                       />
           </div>
         </main>
       </div>
     </div>
 
 
-<ClientNavBar/>
+<!-- <ClientNavBar/> -->
 <slot/>
 
-<user-software  :orders="$page.props.orders" />
 
 
 

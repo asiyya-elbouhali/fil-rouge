@@ -12,8 +12,11 @@ class BusinessCategoryController extends Controller
      */
     public function index()
     {
+        $BusinessCategories = BusinessCategory::paginate(3);
 
+        return $BusinessCategories;
     }
+
 
     public function AllBusinessCategories()
     {
@@ -77,24 +80,24 @@ class BusinessCategoryController extends Controller
     public function update(Request $request, string $id)
     {
          // return $id;
-    
+
          $validatedData = $request->validate([
             'name' => 'required',
             'number_of_devices' => 'required',
             'description' => 'required',
          ]);
-    
+
         $BusinessCategory = BusinessCategory::find($id);
-    
+
         if (!$BusinessCategory) {
             return response()->json([
                 'status' => 'error',
                 'message' => 'Software not found',
             ], 404);
         }
-    
+
         $BusinessCategory->update($validatedData);
-    
+
         return response()->json([
             'status' => 'success',
             'message' => 'Software record updated successfully',
@@ -105,12 +108,17 @@ class BusinessCategoryController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(BusinessCategory $BusinessCategory)
+    public function destroy(BusinessCategory $businessCategory)
     {
-        $BusinessCategory->delete();
+        // return "destroooy";
+        $businessCategory->delete();
+   return response()->json([
+            'status' => 'success',
+            'message' => 'Software record updated successfully',
+            'data' => $businessCategory,
+        ]);
+        return redirect()->route('AdminArea');
+    }
 
-        return redirect()->route('softwares.index');
-        }
 
-        
 }

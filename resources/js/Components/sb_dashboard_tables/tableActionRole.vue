@@ -56,9 +56,9 @@ const saveChanges = async () => {
             <select name="role" id="role"              
              v-model="formDataEdit.type"> 
                 <option>user</option>
-                <option>Developer</option>
+                <option>developer</option>
                 <option>admin</option>
-                <option>Block</option>
+                <!-- <option>Block</option> -->
             </select>
   
       </div>
